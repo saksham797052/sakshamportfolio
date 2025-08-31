@@ -202,7 +202,7 @@
                          </div>
                     </div>
                      <div class="md:w-1/2 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-                        <form id="contact-form" action="send.php" method="post">
+                        <form action="https://formsubmit.co/sakshamsingh797052@gmail.com" method="POST">
                             <div class="mb-5">
                                 <label for="name" class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Name</label>
                                 <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
@@ -215,9 +215,13 @@
                                 <label for="message" class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Message</label>
                                 <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
                             </div>
+                            
+                            <!-- FormSubmit Hidden Inputs for config -->
+                            <input type="hidden" name="_subject" value="New Portfolio Contact Request!">
+                            <input type="hidden" name="_captcha" value="true">
+
                             <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300">Send Message</button>
                         </form>
-                        <div id="form-message" class="mt-4 text-center"></div>
                     </div>
                 </div>
             </div>
@@ -259,49 +263,6 @@
                 }
             });
         });
-
-        // Contact form submission with Fetch API
-        const contactForm = document.getElementById('contact-form');
-        const formMessage = document.getElementById('form-message');
-        if(contactForm) {
-            contactForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const submitButton = contactForm.querySelector('button[type="submit"]');
-                
-                formMessage.textContent = 'Sending...';
-                formMessage.className = 'mt-4 text-center text-gray-600 dark:text-gray-400';
-                submitButton.disabled = true;
-    
-                const formData = new FormData(contactForm);
-    
-                try {
-                    const response = await fetch('send.php', {
-                        method: 'POST',
-                        body: formData
-                    });
-    
-                    const resultText = await response.text();
-    
-                    if (response.ok) {
-                        formMessage.textContent = 'Thank you! Your message has been sent.';
-                        formMessage.className = 'mt-4 text-center text-green-600 font-semibold';
-                        contactForm.reset();
-                    } else {
-                        formMessage.textContent = `Error: ${resultText || 'Could not send message.'}`;
-                        formMessage.className = 'mt-4 text-center text-red-600 font-semibold';
-                    }
-                } catch (error) {
-                    console.error('Submission error:', error);
-                    formMessage.textContent = 'A network error occurred. Please try again later.';
-                    formMessage.className = 'mt-4 text-center text-red-600 font-semibold';
-                } finally {
-                    submitButton.disabled = false;
-                    setTimeout(() => {
-                        formMessage.textContent = '';
-                    }, 6000);
-                }
-            });
-        }
 
         // Scroll animations
         const sections = document.querySelectorAll('.fade-in-section');
