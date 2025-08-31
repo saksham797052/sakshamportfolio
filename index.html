@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        // On page load, set the theme instantly to avoid a flash of unstyled content.
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -62,6 +62,18 @@
                 --angle: 360deg;
             }
         }
+        /* Typing animation styles */
+        #animated-name {
+            display: inline-block;
+        }
+        .typing-cursor {
+            border-right: 3px solid; /* Color will be inherited (white on hero) */
+            animation: blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: currentColor; }
+        }
     </style>
 </head>
 
@@ -101,7 +113,10 @@
                 <div class="p-2 rounded-full mx-auto mb-6 rotating-border shadow-lg inline-block">
                     <img src="saksham.jpg" alt="Saksham Raj Singh" class="w-40 h-40 rounded-full object-cover">
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-3 underline">Saksham Raj Singh</h1>
+                <!-- Wrapper to stabilize the typing animation -->
+                <div class="h-16 md:h-24 flex justify-center items-center mb-3">
+                    <h1 id="animated-name" class="text-4xl md:text-6xl font-bold"></h1>
+                </div>
                 <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto">A proactive and curious student pursuing B.Tech in IoT & Cyber Security, with a strong passion for developing secure and innovative technology solutions.</p>
                 <div class="mt-8 flex justify-center space-x-6">
                      <!-- Social Links -->
@@ -122,7 +137,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     <!-- Project Card 1 -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                        <img src="https://placehold.co/600x400/667EEA/FFFFFF?text=Basic+Keylogger" alt="Project 1" class="w-full h-56 object-cover">
+                        <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=2831&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Abstract image of code on a screen" class="w-full h-56 object-cover">
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-3 dark:text-white">Basic Keylogger</h3>
                             <p class="text-gray-700 dark:text-gray-300 mb-6">A Python-based keylogger to capture keystrokes, focusing on system monitoring and ethical security research concepts.</p>
@@ -133,7 +148,7 @@
                     </div>
                     <!-- Project Card 2 -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                        <img src="https://placehold.co/600x400/764BA2/FFFFFF?text=Password+Checker" alt="Project 2" class="w-full h-56 object-cover">
+                        <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Image of a secure password entry field on a screen" class="w-full h-56 object-cover">
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-3 dark:text-white">Password Strength Checker</h3>
                             <p class="text-gray-700 dark:text-gray-300 mb-6">A tool that assesses the strength of passwords based on various criteria like length, complexity, and character types.</p>
@@ -144,7 +159,7 @@
                     </div>
                      <!-- Project Card 3 -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                        <img src="https://placehold.co/600x400/5B21B6/FFFFFF?text=NayaSa" alt="Project 3" class="w-full h-56 object-cover">
+                        <img src="https://images.unsplash.com/photo-1620579222245-e3d8e3b2b878?q=80&w=2893&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Abstract image representing a circular, sustainable economy" class="w-full h-56 object-cover">
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-3 dark:text-white">NayaSa Circular Marketplace</h3>
                             <p class="text-gray-700 dark:text-gray-300 mb-6">A frontend project for a circular economy marketplace, promoting sustainability and resource reuse through an intuitive UI.</p>
@@ -245,81 +260,91 @@
     </footer>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        
-        // Close mobile menu when a link is clicked
-        const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (mobileMenu) {
-                    mobileMenu.classList.add('hidden');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Typing animation for name
+            const nameEl = document.getElementById('animated-name');
+            if (nameEl) {
+                const nameToType = "Saksham Raj Singh";
+                let index = 0;
+                nameEl.classList.add('typing-cursor');
+
+                function typeWriter() {
+                    if (index < nameToType.length) {
+                        nameEl.textContent += nameToType.charAt(index);
+                        index++;
+                        setTimeout(typeWriter, 120); // Typing speed
+                    } else {
+                        // When typing is done, remove cursor and add underline
+                        nameEl.classList.remove('typing-cursor');
+                        nameEl.classList.add('underline');
+                    }
                 }
-            });
-        });
-
-        // Scroll animations
-        const sections = document.querySelectorAll('.fade-in-section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-        sections.forEach(section => {
-            observer.observe(section);
-        });
-
-        // Dark mode toggle
-        var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-
-        // Change the icons inside the button based on previous settings
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            themeToggleLightIcon.classList.remove('hidden');
-        } else {
-            themeToggleDarkIcon.classList.remove('hidden');
-        }
-
-        var themeToggleBtn = document.getElementById('theme-toggle');
-
-        themeToggleBtn.addEventListener('click', function() {
-
-            // toggle icons inside button
-            themeToggleDarkIcon.classList.toggle('hidden');
-            themeToggleLightIcon.classList.toggle('hidden');
-
-            // if set via local storage previously
-            if (localStorage.getItem('color-theme')) {
-                if (localStorage.getItem('color-theme') === 'light') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                }
-
-            // if NOT set via local storage previously
-            } else {
-                if (document.documentElement.classList.contains('dark')) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                }
+                typeWriter();
             }
-        });
 
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Close mobile menu when a link is clicked
+            const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (mobileMenu) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Scroll animations
+            const sections = document.querySelectorAll('.fade-in-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Dark mode toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+            // Set the initial icon visibility based on the current theme
+            if (document.documentElement.classList.contains('dark')) {
+                themeToggleLightIcon.classList.remove('hidden');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+            }
+
+            // Add the click event listener
+            themeToggleBtn.addEventListener('click', function() {
+                // Toggle the icons
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                // Toggle the 'dark' class on the <html> element and check if it's now present
+                const isDark = document.documentElement.classList.toggle('dark');
+                
+                // Save the user's preference to localStorage
+                if (isDark) {
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    localStorage.setItem('color-theme', 'light');
+                }
+            });
+        });
     </script>
 </body>
 
